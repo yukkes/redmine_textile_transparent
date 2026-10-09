@@ -1,0 +1,8 @@
+#!/bin/bash
+
+docker run \
+       -v $PWD:/usr/src/redmine/plugins/redmine_textile_transparent \
+       -e RAILS_ENV=test \
+       --rm \
+       redmine_textile_transparent_test \
+       rake db:migrate redmine:plugins:test

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'digest/md5'
+
 # A delegating formatter registered as "hybrid".
 #
 # Each text is sniffed: texts containing Textile markup are rendered by
@@ -10,8 +12,6 @@ module Redmine
   module WikiFormatting
     module Hybrid
       class Formatter
-        include Redmine::WikiFormatting::SectionHelper
-
         def initialize(text, options = {})
           @text = text
           @options = options || {}
@@ -21,8 +21,23 @@ module Redmine
           delegate_formatter.to_html(*args)
         end
 
+        # Section editing is delegated as well, so that Textile texts are split
+        # at Textile headings. Redmine 5.0's Markdown formatter has no section
+        # support; the whole text is then edited as a single section.
+        def get_section(index)
+          formatter = delegate_formatter
+          return formatter.get_section(index) if formatter.respond_to?(:get_section)
+
+          [@text.to_s, Digest::MD5.hexdigest(@text.to_s)]
+        end
+
         def update_section(index, update, hash = nil)
-          delegate_formatter.update_section(index, update, hash)
+          formatter = delegate_formatter
+          return formatter.update_section(index, update, hash) if formatter.respond_to?(:update_section)
+
+          raise Redmine::WikiFormatting::StaleSectionError if hash.present? && hash != get_section(index)[1]
+
+          update
         end
 
         private

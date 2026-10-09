@@ -33,24 +33,22 @@ Rails.application.config.after_initialize do
   )
 end
 
-Rails.configuration.to_prepare do
-  base = File.dirname(__FILE__)
+# Redmine runs each plugin's init.rb from a to_prepare callback, so the
+# patches below are (re)applied whenever the application is prepared.
 
-  require_dependency File.join(base, 'lib', 'textile_transparent', 'textile_sniffer')
-  require_dependency File.join(base, 'lib', 'redmine', 'wiki_formatting', 'hybrid', 'formatter')
-  require_dependency File.join(base, 'lib', 'redmine', 'wiki_formatting', 'hybrid', 'helper')
-
-  # Markdown syntax help while hybrid is selected.
-  require_dependency File.join(base, 'lib', 'textile_transparent', 'help_controller_patch')
+# Markdown syntax help while hybrid is selected. Redmine 5.x serves the
+# syntax help as static files linked from the (Markdown) toolbar instead.
+if Object.const_defined?(:HelpController)
+  require File.join(base, 'lib', 'textile_transparent', 'help_controller_patch')
   unless HelpController.included_modules.include?(TextileTransparent::HelpControllerPatch)
     HelpController.prepend TextileTransparent::HelpControllerPatch
   end
+end
 
-  # Quote button should emit Markdown while hybrid is selected.
-  if defined?(Redmine::QuoteReply::Helper)
-    require_dependency File.join(base, 'lib', 'textile_transparent', 'quote_reply_helper_patch')
-    unless Redmine::QuoteReply::Helper.included_modules.include?(TextileTransparent::QuoteReplyHelperPatch)
-      Redmine::QuoteReply::Helper.prepend TextileTransparent::QuoteReplyHelperPatch
-    end
+# Quote button should emit Markdown while hybrid is selected.
+if defined?(Redmine::QuoteReply::Helper)
+  require File.join(base, 'lib', 'textile_transparent', 'quote_reply_helper_patch')
+  unless Redmine::QuoteReply::Helper.included_modules.include?(TextileTransparent::QuoteReplyHelperPatch)
+    Redmine::QuoteReply::Helper.prepend TextileTransparent::QuoteReplyHelperPatch
   end
 end

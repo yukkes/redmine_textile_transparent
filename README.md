@@ -2,6 +2,7 @@
 
 [![tests](https://github.com/yukkes/redmine_textile_transparent/actions/workflows/tests.yml/badge.svg)](https://github.com/yukkes/redmine_textile_transparent/actions/workflows/tests.yml)
 [![Redmine](https://img.shields.io/badge/Redmine-5.0%20%7C%205.1%20%7C%206.0%20%7C%206.1%20%7C%207.0-B32024?logo=redmine)](https://www.redmine.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](MIT-LICENSE)
 [![Code style: RuboCop](https://img.shields.io/badge/code_style-rubocop-brightgreen.svg)](https://github.com/rubocop/rubocop)
 
 A Redmine plugin that adds a **Hybrid** text formatting option.
@@ -58,3 +59,7 @@ bin/test
 GitHub Actions runs RuboCop, Brakeman and the test suite against
 Redmine 5.0, 5.1, 6.0, 6.1 and 7.0 on every push to `main` and on pull
 requests.
+
+## License
+
+This plugin is released under the [MIT License](MIT-LICENSE).

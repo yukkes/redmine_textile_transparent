@@ -7,10 +7,10 @@ module TextileTransparent
     def show_wiki_syntax
       if Setting.text_formatting == 'hybrid'
         markdown = TextileTransparent::TextileSniffer.markdown_format
-        type = params[:type].nil? ? "" : "#{params[:type]}_"
+        type = params[:type].nil? ? '' : "#{params[:type]}_"
         lang = current_language.to_s.downcase
         template = "help/wiki_syntax/#{markdown}/#{lang}/wiki_syntax_#{type}#{markdown}"
-        lang = "en" unless lookup_context.exists?(template)
+        lang = 'en' unless lookup_context.exists?(template)
         render template: "help/wiki_syntax/#{markdown}/#{lang}/wiki_syntax_#{type}#{markdown}", layout: nil
       else
         super

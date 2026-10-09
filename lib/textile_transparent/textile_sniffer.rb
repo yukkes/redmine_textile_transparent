@@ -11,44 +11,45 @@
 module TextileTransparent
   module TextileSniffer
     STRONG_PATTERNS = [
-      /^[ \t]*h[1-6]\.\s/,                              # h1. Heading
-      /^[ \t]*(?:bq|bc|p)\.\s/,                          # bq. bc. p.
-      /"[^"\n]+":(?:https?|ftp|mailto):\/\//,            # "text":http://...
-      /"[^"\n]+":\//,                                    # "text":/local/path
-      /(?<![!\w])!(?!\[)[^\s!][^!\n]*!(?!\w)/,           # !image.png! (not ![alt](url))
-      /^\|[_.<>=~^{\\][^|\n]*\|/,                        # |_. header | cell with attrs
-      /(?<!\w)%\{[^}\n]+\}[^%\n]*%(?!\w)/,               # %{style}text%
-      /^fn\d+\.\s/,                                      # fn1. footnote
+      /^[ \t]*h[1-6]\.\s/,                             # h1. Heading
+      /^[ \t]*(?:bq|bc|p)\.\s/,                        # bq. bc. p.
+      %r{"[^"\n]+":(?:https?|ftp|mailto)://},          # "text":http://...
+      %r{"[^"\n]+":/},                                 # "text":/local/path
+      /(?<![!\w])!(?!\[)[^\s!][^!\n]*!(?!\w)/,         # !image.png! (not ![alt](url))
+      /^\|[_.<>=~^{\\][^|\n]*\|/,                      # |_. header | cell with attrs
+      /(?<!\w)%\{[^}\n]+\}[^%\n]*%(?!\w)/,             # %{style}text%
+      /^fn\d+\.\s/                                     # fn1. footnote
     ].freeze
 
     WEAK_PATTERNS = [
-      /(?<!\*)\*[^\s*][^*\n]*\*(?!\*)/,                  # *bold*  (not **bold**)
-      /(?<!\w)_[^\s_][^_\n]*_(?!\w)/,                    # _em_
-      /(?<!\w)-[^\s-][^-\n]*-(?!\w)/,                    # -deleted-
-      /(?<!\w)\+[^\s+][^+\n]*\+(?!\w)/,                  # +inserted+
-      /(?<!\w)\^[^\s^\n]+\^(?!\w)/,                      # ^sup^
-      /(?<![~\w])~[^~\s][^~\n]*~(?![~\w])/,              # ~sub~ (not ~~strike~~)
+      /(?<!\*)\*[^\s*][^*\n]*\*(?!\*)/,                # *bold*  (not **bold**)
+      /(?<!\w)_[^\s_][^_\n]*_(?!\w)/,                  # _em_
+      /(?<!\w)-[^\s-][^-\n]*-(?!\w)/,                  # -deleted-
+      /(?<!\w)\+[^\s+][^+\n]*\+(?!\w)/,                # +inserted+
+      /(?<!\w)\^[^\s^\n]+\^(?!\w)/,                    # ^sup^
+      /(?<![~\w])~[^~\s][^~\n]*~(?![~\w])/             # ~sub~ (not ~~strike~~)
     ].freeze
 
     # Regions that must not be scanned for markup signals.
     # <notextile> itself IS a strong textile signal, so it is handled
     # separately before stripping.
     STRIP_PATTERNS = [
-      /^[ \t]*(```|~~~).*?^[ \t]*\1/m,                   # markdown fenced code
-      %r{<pre[^>]*>.*?</pre>}mi,                         # textile/html <pre>
-      %r{<code[^>]*>.*?</code>}mi,                       # inline code block
-      /`[^`\n]+`/,                                       # markdown inline code
-      %r{@"[^"\n]+"}m,                                   # textile @code@
+      /^[ \t]*(```|~~~).*?^[ \t]*\1/m,                 # markdown fenced code
+      %r{<pre[^>]*>.*?</pre>}mi,                       # textile/html <pre>
+      %r{<code[^>]*>.*?</code>}mi,                     # inline code block
+      /`[^`\n]+`/,                                     # markdown inline code
+      /@"[^"\n]+"/m                                    # textile @code@
     ].freeze
 
-    NOTEXTILE_RE = %r{<notextile>}i
+    NOTEXTILE_RE = /<notextile>/i.freeze
 
     class << self
       # Returns true if the text looks like it was written in Textile.
       def textile?(text)
         return false if text.nil?
+
         raw = text.to_s
-        return true if raw =~ NOTEXTILE_RE
+        return true if NOTEXTILE_RE.match?(raw)
 
         body = strip_ignored_regions(raw.gsub(%r{<notextile>.*?</notextile>}mi, ' '))
 

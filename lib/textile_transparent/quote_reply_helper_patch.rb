@@ -13,7 +13,7 @@ module TextileTransparent
             quote_reply_url_param: url,
             quote_reply_text_formatting_param: markdown
           },
-          class: "#{icon_only ? "icon-only" : "icon"} icon-quote"
+          class: "#{icon_only ? 'icon-only' : 'icon'} icon-quote"
         }
         button_params[:title] = l(:button_quote) if icon_only
 

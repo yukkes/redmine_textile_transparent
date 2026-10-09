@@ -25,9 +25,10 @@ module Redmine
           helper = Redmine::WikiFormatting.helper_for(
             TextileTransparent::TextileSniffer.markdown_format
           )
-          if helper.instance_methods.include?(method_name) ||
+          if helper.method_defined?(method_name) ||
              helper.methods.include?(method_name)
             extend helper
+
             send(method_name, *args)
           else
             super()

@@ -4,12 +4,14 @@ require 'redmine'
 
 Redmine::Plugin.register :redmine_textile_transparent do
   name 'Redmine Textile Transparent'
-  author 'yuker'
+  author 'yukkes'
   description 'Adds a "Hybrid" text formatting option that renders existing Textile ' \
               'content with Redmine\'s built-in Textile formatter and new Markdown ' \
               'content with the built-in Markdown formatter. No data conversion ' \
               'and no extra tables are required.'
   version '0.1.0'
+  url 'https://github.com/yukkes/redmine_textile_transparent'
+  author_url 'https://github.com/yukkes'
   requires_redmine version_or_higher: '5.0.0'
 end
 
